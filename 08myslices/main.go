@@ -34,4 +34,9 @@ func main() {
 
 	sort.Ints(mynumbers)
 	fmt.Println(mynumbers)
+
+	// remove a value from slice based on index
+	index := 2
+	mynumbers = append(mynumbers[:index], mynumbers[index+1:]...)
+	fmt.Println("My numbers: ", mynumbers)
 }
