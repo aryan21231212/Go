@@ -1,1 +1,1 @@
-# going with go
+# going with GO
