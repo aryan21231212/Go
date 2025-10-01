@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
 func main() {
 	fmt.Println("hello")
 	// getrequest()
-	postrequest()
+	// postrequest()
+	postForm()
 }
 
 func getrequest() {
@@ -44,5 +46,24 @@ func postrequest() {
 
 	content, _ := io.ReadAll(response.Body)
 	defer response.Body.Close()
+	fmt.Println("Content", string(content))
+}
+
+func postForm() {
+	const myURL = "http://localhost:3000/postform"
+
+	data := url.Values{}
+	data.Add("name", "aryan")
+	data.Add("age", "20")
+	data.Add("year", "SE")
+	data.Add("city", "pune")
+
+	response, err := http.PostForm(myURL, data)
+
+	if err != nil {
+		panic(err)
+	}
+
+	content, _ := io.ReadAll(response.Body)
 	fmt.Println("Content", string(content))
 }
