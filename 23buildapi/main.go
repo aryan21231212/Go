@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Course struct {
@@ -39,4 +41,20 @@ func getAllCources(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("getting all cources")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(courses)
+}
+
+func getOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("getting one cources")
+	w.Header().Set("Content-Type", "application/json")
+
+	// grabing the param
+	parama := mux.Vars(r)
+
+	for _, cource := range courses {
+		if cource.CourseId == parama["id"] {
+			json.NewEncoder(w).Encode(cource)
+			return
+		}
+		json.NewEncoder(w).Encode("no cource found with given id")
+	}
 }
