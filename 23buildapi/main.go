@@ -108,3 +108,20 @@ func updateOneCource(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func deleteoneCource(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Deleting one cource")
+	w.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+
+	for index, cource := range courses {
+		if cource.CourseId == params["id"] {
+			courses = append(courses[:index], courses[index+1])
+			json.NewEncoder(w).Encode("cource deleted")
+			break
+		} else {
+			json.NewEncoder(w).Encode("No cource found with given id")
+		}
+	}
+}
