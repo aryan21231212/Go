@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -26,7 +29,8 @@ var courses []Course
 //middleware - fileter, auth
 
 func (c *Course) isEmpty() bool {
-	return c.CourseName == "" && c.CourseId == ""
+	// return c.CourseName == "" && c.CourseId == ""
+	return c.CourseName == ""
 }
 
 func main() {
@@ -57,4 +61,29 @@ func getOneCourse(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode("no cource found with given id")
 	}
+}
+
+func createOneCource(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Creating one Cource")
+	w.Header().Set("Content-Type", "application/json")
+
+	//if body is empty
+	if r.Body == nil {
+		json.NewEncoder(w).Encode("Please send some data")
+		return
+	}
+
+	var cource Course
+	_ = json.NewDecoder(r.Body).Decode(&cource)
+	if cource.isEmpty() {
+		json.NewEncoder(w).Encode("no data inside json")
+		return
+	}
+
+	// generate unique id,string
+	rand.Seed(time.Now().UnixNano())
+	cource.CourseId = strconv.Itoa(rand.Intn(100))
+	courses = append(courses, cource)
+
+	json.NewEncoder(w).Encode(cource)
 }
