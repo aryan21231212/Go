@@ -1,6 +1,11 @@
 package controller
 
 import (
+	"context"
+	"fmt"
+	"github/aryan/mongodb/model"
+	"log"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -15,9 +20,9 @@ func init() {
 
 	clientOption := options.Client().ApplyURI(connectionString)
 
-	client , err;= mongo.Connect(Context.TODO(), clientOption)
+	client, err := mongo.Connect(context.TODO(), clientOption)
 
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -26,4 +31,15 @@ func init() {
 	collection = client.Database(dbName).Collection(colName)
 
 	fmt.Println("Collection instance is ready")
+}
+
+// insert one record
+
+func insertOneMovie(movie model.Netflix) {
+	inserted, err := collection.insertone(context.Background(), movie)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("One record successfully Inserted of ID: ", inserted.insertedID)
 }
