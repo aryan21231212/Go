@@ -6,7 +6,9 @@ import (
 	"github/aryan/mongodb/model"
 	"log"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
@@ -34,7 +36,6 @@ func init() {
 }
 
 // insert one record
-
 func insertOneMovie(movie model.Netflix) {
 	inserted, err := collection.insertone(context.Background(), movie)
 	if err != nil {
@@ -42,4 +43,18 @@ func insertOneMovie(movie model.Netflix) {
 	}
 
 	fmt.Println("One record successfully Inserted of ID: ", inserted.insertedID)
+}
+
+// delete one
+func deleteOneMovie(movieId string) {
+	id, _ := primitive.ObjectIDFromHex(movieId)
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"watched": true}}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("modified count: ", result.ModifiedCount)
 }
