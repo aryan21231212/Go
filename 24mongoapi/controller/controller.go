@@ -2,9 +2,11 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github/aryan/mongodb/model"
 	"log"
+	"net/http"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -59,47 +61,53 @@ func updateOneMovie(movieId string) {
 	fmt.Println("modified count: ", result.ModifiedCount)
 }
 
-
-// delete one 
-func deleteOneMovie(movieId string){
-	id,_ := primitive.ObjectIDFromHex(movieId)
-	filter := bson.M{"_id":id}
-	deleteCount, err := collection.DeleteOne(context.Background(),filter,nil)
-	if err!=nil{
+// delete one
+func deleteOneMovie(movieId string) {
+	id, _ := primitive.ObjectIDFromHex(movieId)
+	filter := bson.M{"_id": id}
+	deleteCount, err := collection.DeleteOne(context.Background(), filter, nil)
+	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("movie deleted: ",deleteCount)
+	fmt.Println("movie deleted: ", deleteCount)
 
 }
 
 // delete many
-func deleteManyMovie(){
-	deleteResult, err := collection.DeleteMany(context.Background(),bson.D{{}})
-	if err!=nil{
+func deleteManyMovie() {
+	deleteResult, err := collection.DeleteMany(context.Background(), bson.D{{}})
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Number of movies deleted: ",deleteResult.DeletedCount)
+	fmt.Println("Number of movies deleted: ", deleteResult.DeletedCount)
 }
 
-
 // getting all movies
-func getAllMovies() []primitive.M{
-	cur ,err := collection.Find(context.Background(),bson.M{})
-	if err!=nil{
+func getAllMovies() []primitive.M {
+	cur, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
 		log.Fatal(err)
 	}
-	 var movies []primitive.M
+	var movies []primitive.M
 
-	 for cur.Next(context.Background()){
+	for cur.Next(context.Background()) {
 		var movie bson.M
 		err := cur.Decode(&movie)
-		if err!=nil{
+		if err != nil {
 			log.Fatal(err)
 		}
 		movies = append(movies, movie)
-	 }
+	}
 
-	 defer cur.Close(context.Background())
-	 return movies
+	defer cur.Close(context.Background())
+	return movies
+}
+
+// controller file
+
+func GetAllMovies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	allMovies := getAllMovies()
+	json.NewEncoder(w).Encode(allMovies)
 }
