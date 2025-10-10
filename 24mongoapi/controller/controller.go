@@ -24,7 +24,6 @@ var collection *mongo.Collection
 func init() {
 
 	clientOption := options.Client().ApplyURI(connectionString)
-
 	client, err := mongo.Connect(context.TODO(), clientOption)
 
 	if err != nil {
@@ -32,7 +31,6 @@ func init() {
 	}
 
 	fmt.Println("MongoDB connection success")
-
 	collection = client.Database(dbName).Collection(colName)
 
 	fmt.Println("Collection instance is ready")
