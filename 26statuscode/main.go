@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 )
 
+var link = []string{"test"}
+
 var wg sync.WaitGroup
+var mut sync.Mutex
 
 func main() {
 	websites := []string{
@@ -21,10 +25,14 @@ func main() {
 		wg.Add(1)
 	}
 	wg.Wait()
+	fmt.Println("Links:", link)
 }
 
 func getStatusCode(url string) {
 	defer wg.Done()
 	res, _ := http.Get(url)
 	println(url, res.StatusCode)
+	mut.Lock()
+	link = append(link, url)
+	mut.Unlock()
 }
